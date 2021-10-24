@@ -111,9 +111,9 @@ public class Downstream {
             log.info(e.getMessage(), e);
         }finally{
 //            testMarketDataRequest();
-//            testNewOrderSingle();
+            testNewOrderSingle();
 //            for(int i=0;i<10;i++){
-                testQuoteRequest();
+//                testQuoteRequest();
 //            }
 //            testQuoteCancel();
         }
@@ -125,8 +125,8 @@ public class Downstream {
         newOrderSingle.setField(new PartyID("PDP_TRADE"));
         newOrderSingle.setField(new QuoteID("QuoteID_56ed394f-314c-4755-8a40-716e8e304113"));
         newOrderSingle.setField(new ClOrdID("ClOrdID_"+UUID.randomUUID().toString()));
-        newOrderSingle.setField(new Account("usrid1006"));
-        newOrderSingle.setField(new QuoteRespID("20157"));
+        newOrderSingle.setField(new Account("usrid1003"));
+        newOrderSingle.setField(new QuoteRespID("20166"));
         newOrderSingle.setField(new QuoteMsgID("GenIdeal"));
         newOrderSingle.setField(new TradeDate(new SimpleDateFormat("yyyyMMdd").format(new Date())));
         Session.sendToTarget(newOrderSingle,initiator.getSessions().get(0));
