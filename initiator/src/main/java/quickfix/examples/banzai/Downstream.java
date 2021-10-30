@@ -111,9 +111,9 @@ public class Downstream {
             log.info(e.getMessage(), e);
         }finally{
 //            testMarketDataRequest();
-            testNewOrderSingle();
+//            testNewOrderSingle();
 //            for(int i=0;i<10;i++){
-//                testQuoteRequest();
+                testQuoteRequest();
 //            }
 //            testQuoteCancel();
         }
@@ -138,7 +138,7 @@ public class Downstream {
         qr.setField(new PartyID("PDP_TRADE"));
         qr.setField(new Symbol("USDCNY"));
         qr.setField(new Side('1'));
-        qr.setField(new QuoteType(0));
+        qr.setField(new QuoteType(1));
         qr.setField(new OrdType('2'));
         qr.setField(new OptPayAmount(Double.valueOf("1000")));
         qr.setField(new TransactTime(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
