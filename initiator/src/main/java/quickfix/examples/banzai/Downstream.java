@@ -110,8 +110,8 @@ public class Downstream {
             log.info(e.getMessage(), e);
         }finally{
 //            testMarketDataRequest();
-            testNewOrderSingle();
-//                testQuoteRequest();
+//            testNewOrderSingle();
+                testQuoteRequest();
 //            for(int i=0;i<10;i++){
 //                testQuoteRequest(i);
 //                Thread.sleep(1500);
@@ -141,8 +141,8 @@ public class Downstream {
         qr.setField(new QuoteReqID("QuoteRequestID_"+ UUID.randomUUID().toString()));
         qr.setField(new PartyID("PDP_TRADE"));
         qr.setField(new Symbol("EURUSD"));
-        qr.setField(new Side('7'));//1-b,2-s,7-not tell
-        qr.setField(new QuoteType(2));//1.rfq,2.rfs,3.oneClick
+        qr.setField(new Side('2'));//1-b,2-s,7-not tell
+        qr.setField(new QuoteType(3));//1.rfq,2.rfs,3.oneClick
         qr.setField(new OrdType('2'));
         qr.setField(new OptPayAmount(Double.valueOf("1000")));
         qr.setField(new TransactTime(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
