@@ -19,6 +19,7 @@
 
 package quickfix.examples.banzai;
 
+import com.pactera.fix.custom.*;
 import org.quickfixj.jmx.JmxExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import quickfix.fix50sp1.QuoteRequest;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
@@ -109,14 +111,20 @@ public class Downstream {
         } catch (Exception e) {
             log.info(e.getMessage(), e);
         }finally{
-//            testMarketDataRequest();
-//            testNewOrderSingle();
-                testQuoteRequest();
-//            for(int i=0;i<10;i++){
-//                testQuoteRequest(i);
-//                Thread.sleep(1500);
-//            }
+            String symbols="AUDCAD,AUDCHF,AUDHKD,AUDJPY,AUDNZD,AUDUSD,CADCHF,CADHKD,CADJPY,CHFHKD,CHFJPY,EURAUD,EURCAD,EURCHF,EURGBP,EURHKD,EURJPY,EURNZD,EURUSD,GBPAUD,GBPCAD,GBPCHF,GBPHKD,GBPJPY,GBPNZD,GBPUSD,HKDCNH,HKDJPY,NZDCAD,NZDCHF,NZDHKD,NZDJPY,NZDUSD,USDCAD,USDCHF,USDCNH,USDHKD,USDJPY,XAUUSD";
+//            String[] ss=symbols.split("[,]");
+//            for(int i=0;i<1;i++){
+//                for(int o=0;o<1;o++){
+//                    String symbol=ss[o];
+////            testMarketDataRequest();
+            testNewOrderSingle();
+//                testQuoteRequest();
+//                    testQuoteRequest(o,symbol);
+//                    Thread.sleep(1000);
+////                    Thread.sleep(10000);
+//                }
 //            testQuoteCancel();
+//            }
         }
         shutdownLatch.await();
     }
@@ -124,15 +132,28 @@ public class Downstream {
     private static void testNewOrderSingle() throws SessionNotFound {
         NewOrderSingle newOrderSingle = new NewOrderSingle();
         newOrderSingle.setField(new PartyID("PDP_TRADE"));
-        newOrderSingle.setField(new QuoteReqID("QuoteRequestID_39473ac0-1a82-4a02-85df-4b0c31da8e81"));
+        newOrderSingle.setField(new QuoteReqID("QuoteRequestID_be5548ba-b16d-4674-a718-366de4cbc342"));
         newOrderSingle.setField(new QuoteID("QuoteID_bd4d108f-d353-464e-add2-633e755bfe71"));
-        newOrderSingle.setField(new ClOrdID("ClOrdID_"+ UUID.randomUUID().toString()));
-        newOrderSingle.setField(new Account("1001"));
-        newOrderSingle.setField(new QuoteRespID("22337"));
+        newOrderSingle.setField(new ClOrdID("ClOrdID_"+UUID.randomUUID().toString()));
+        newOrderSingle.setField(new Side('1'));//1-b,2-s
+        newOrderSingle.setField(new Account("client3@trapi"));
+        newOrderSingle.setField(new Issuer("1002"));
+        newOrderSingle.setField(new QuoteRespID("22435"));
         newOrderSingle.setField(new QuoteMsgID("GenIdeal"));
-        newOrderSingle.setField(new QuoteType(2));//1.rfq,2.rfs,3.oneClick
-        newOrderSingle.setField(new Side('2'));//1-b,2-s
+        newOrderSingle.setField(new Spread(Double.valueOf("10")));//markup
         newOrderSingle.setField(new TradeDate(new SimpleDateFormat("yyyyMMdd").format(new Date())));
+        //added=====================================
+        newOrderSingle.setField(new Symbol("EUR.USD"));
+        newOrderSingle.setField(new OrderQty(Double.valueOf("5000")));
+        newOrderSingle.setField(new SettlType("0"));//0-SPOT,1-2D
+        newOrderSingle.setField(new ExecutionStyle(2));//1-rfq,2-rfs,3-one click
+        //one click fixed==================================
+        newOrderSingle.setField(new DPS(4));
+        newOrderSingle.setField(new Price(Double.valueOf("1.12397")));
+        newOrderSingle.setField(new OneClickTolerance(0.0005));
+        newOrderSingle.setField(new OneClickAction(2));//1-FILL_AT_MY_RATE_ONLY,2-FILL_AT_LATEST,3-SLIPPAGE
+        newOrderSingle.setField(new StreamingQuote(1.12515));
+
         Session.sendToTarget(newOrderSingle,initiator.getSessions().get(0));
     }
 
@@ -140,15 +161,17 @@ public class Downstream {
         QuoteRequest qr=new QuoteRequest();
         qr.setField(new QuoteReqID("QuoteRequestID_"+ UUID.randomUUID().toString()));
         qr.setField(new PartyID("PDP_TRADE"));
-        qr.setField(new Symbol("EURUSD"));
-        qr.setField(new Side('2'));//1-b,2-s,7-not tell
-        qr.setField(new QuoteType(3));//1.rfq,2.rfs,3.oneClick
-        qr.setField(new OrdType('2'));
-        qr.setField(new OptPayAmount(Double.valueOf("1000")));
+        qr.setField(new Symbol("EUR.USD"));
+        qr.setField(new Side('7'));//1-b,2-s,7-not tell
+        qr.setField(new ExecutionStyle(2));//1.rfq,2.rfs
+        qr.setField(new OrdType('1'));//1-Market,2-Limit
+        qr.setField(new SettlType("0"));//0-SPOT,1-2D
+//        qr.setField(new Account("0"));//0-SPOT,1-2D
+        qr.setField(new OrderQty(Double.valueOf("5000")));
         qr.setField(new TransactTime(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
         Session.sendToTarget(qr,initiator.getSessions().get(0));
     }
-    private static void testQuoteRequest(int i) throws SessionNotFound{
+    private static void testQuoteRequest(int i, String symbol) throws SessionNotFound{
         int a=i%2;
         char side='0';
         if(a==1){
@@ -160,7 +183,7 @@ public class Downstream {
         QuoteRequest qr=new QuoteRequest();
         qr.setField(new QuoteReqID("QuoteRequestID_"+ UUID.randomUUID().toString()));
         qr.setField(new PartyID("PDP_TRADE"));
-        qr.setField(new Symbol("EURUSD"));
+        qr.setField(new Symbol(symbol));
         qr.setField(new Side(side));//1-b,2-s,7-not tell
         qr.setField(new QuoteType(1));//1.rfq,2.rfs,3.oneClick
         qr.setField(new OrdType('2'));
