@@ -117,8 +117,8 @@ public class Downstream {
 //                for(int o=0;o<1;o++){
 //                    String symbol=ss[o];
 ////            testMarketDataRequest();
-            testNewOrderSingle();
-//                testQuoteRequest();
+//            testNewOrderSingle();
+                testQuoteRequest();
 //                    testQuoteRequest(o,symbol);
 //                    Thread.sleep(1000);
 ////                    Thread.sleep(10000);
