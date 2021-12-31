@@ -57,6 +57,7 @@
     </message>
     <message name="ExecutionReport" msgtype="8" msgcat="app">
       <component name="ApplicationSequenceControl" required="N"/>
+      <field name="ExecutionStyle" required="Y"/>
       <field name="OrderID" required="Y"/>
       <field name="SecondaryOrderID" required="N"/>
       <field name="SecondaryClOrdID" required="N"/>
